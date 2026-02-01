@@ -48,3 +48,16 @@ surface0 = "#ccd0da"
 base = "#eff1f5"
 mantle = "#e6e9f"
 crust = "#dce0e8"
+
+[python]
+symbol = ""
+
+[lua]
+symbol = ""
+
+[rust]
+symbol = ""
+
+[nodejs]
+symbol = ""
+
