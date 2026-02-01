@@ -18,6 +18,7 @@
 #     config nu --doc | nu-highlight | less -
 use std/util "path add"
 path add "/opt/homebrew/bin"
+path add "~/.cargo/bin"
 $env.config.buffer_editor = "vi"
 $env.config.show_banner = false
 
