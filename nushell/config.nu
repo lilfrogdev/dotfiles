@@ -17,8 +17,11 @@
 # options using:
 #     config nu --doc | nu-highlight | less -
 use std/util "path add"
+path add "/opt/homebrew/opt/curl/bin"
 path add "/opt/homebrew/bin"
 path add "~/.cargo/bin"
+path add "~/.local/bin"
+path add "~/go/bin"
 $env.config.buffer_editor = "vi"
 $env.config.show_banner = false
 
@@ -28,3 +31,9 @@ starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.n
 
 #vim mode
 $env.config.buffer_editor = "nvim"
+
+# SSH into VPS
+alias "ssh lfdc" = ssh -i ~/.ssh/id_ed25519 lilfrogdev@187.124.242.250
+
+# SSH tunnel for OpenClaw dashboard (then open http://localhost:18789)
+alias "ssh lfdd" = ssh -i ~/.ssh/id_ed25519 -N -L 18789:127.0.0.1:18789 lilfrogdev@187.124.242.250
