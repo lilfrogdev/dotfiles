@@ -20,6 +20,7 @@ use std/util "path add"
 path add "/opt/homebrew/opt/curl/bin"
 path add "/opt/homebrew/bin"
 path add "~/.cargo/bin"
+path add "/usr/local/bin"
 path add "~/.local/bin"
 path add "~/go/bin"
 $env.config.buffer_editor = "vi"
@@ -28,6 +29,9 @@ $env.config.show_banner = false
 #starship
 mkdir ($nu.data-dir | path join "vendor/autoload")
 starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+
+#claude
+$env.NODE_EXTRA_CA_CERTS = $"($env.HOME)/.claude/certs/salesforce-ca-bundle.pem"
 
 #vim mode
 $env.config.buffer_editor = "nvim"

@@ -64,7 +64,7 @@ require("telescope").setup({
 require("telescope").load_extension("ui-select")
 
 require("catppuccin").setup({
-	flavour = "latte",
+	flavour = "mocha",
 	integrations = {
 		lualine = true,
 		treesitter = true,

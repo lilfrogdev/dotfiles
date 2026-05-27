@@ -1,4 +1,8 @@
-theme = Catppuccin Latte
+theme = Catppuccin Mocha
 
 font-family = "JetBrains Nerd Font Mono"
-font-size = 14
+font-size = 16
+font-thicken = true
+
+background-opacity = 0.92
+background-blur-radius = 20
