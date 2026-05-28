@@ -35,7 +35,8 @@ local plugins = {
 	{ "williamboman/mason-lspconfig.nvim" },
 	{ "neovim/nvim-lspconfig" },
 	{ "nvim-telescope/telescope-ui-select.nvim" },
-	{ "nvimtools/none-ls.nvim" },
+	{ "stevearc/conform.nvim" },
+	{ "mfussenegger/nvim-lint" },
 	{ "hrsh7th/nvim-cmp" },
 	{ "hrsh7th/cmp-nvim-lsp" },
 	{ "hrsh7th/cmp-buffer" },
@@ -156,66 +157,48 @@ vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
 
-local null_ls = require("null-ls")
-
-local rustfmt = {
-	name = "rustfmt",
-	meta = {
-		url = "https://github.com/rust-lang/rustfmt",
-		description = "Rust formatter from rustup",
+-- Formatting via conform.nvim
+local conform = require("conform")
+conform.setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		javascript = { "prettier" },
+		typescript = { "prettier" },
+		typescriptreact = { "prettier" },
+		javascriptreact = { "prettier" },
+		json = { "prettier" },
+		html = { "prettier" },
+		css = { "prettier" },
+		markdown = { "prettier" },
+		yaml = { "prettier" },
+		python = { "ruff_format" },
+		rust = { "rustfmt" },
+		sh = { "shfmt" },
+		bash = { "shfmt" },
+		terraform = { "terraform_fmt" },
 	},
-	method = null_ls.methods.FORMATTING,
-	filetypes = { "rust" },
-	generator = null_ls.formatter({
-		command = "rustfmt",
-		args = { "--emit", "stdout" },
-		to_stdin = true,
-	}),
-}
-
-local clippy = {
-	name = "clippy",
-	meta = {
-		url = "https://github.com/rust-lang/rust-clippy",
-		description = "Rust linter using cargo clippy",
-	},
-	method = null_ls.methods.DIAGNOSTICS,
-	filetypes = { "rust" },
-	generator = null_ls.generator({
-		command = "cargo",
-		args = { "clippy", "--message-format=json", "--quiet" },
-		to_stdin = false,
-		from_stderr = false,
-		format = "json_raw",
-	}),
-}
-
-null_ls.setup({
-	sources = {
-		null_ls.builtins.formatting.stylua,
-		null_ls.builtins.formatting.prettier,
-		null_ls.builtins.formatting.ruff,
-		null_ls.builtins.formatting.terraform_fmt,
-		null_ls.builtins.formatting.shfmt,
-		null_ls.builtins.formatting.markdownlint,
-
-		null_ls.builtins.diagnostics.eslint,
-		null_ls.builtins.diagnostics.ruff,
-		null_ls.builtins.diagnostics.shellcheck,
-		null_ls.builtins.diagnostics.yamllint,
-		null_ls.builtins.diagnostics.hadolint,
-
-		rustfmt,
-		clippy,
+	format_on_save = {
+		timeout_ms = 2000,
+		lsp_format = "fallback",
 	},
 })
-vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>gf", function()
+	conform.format({ async = false, lsp_format = "fallback" })
+end)
 
-local format_augroup = vim.api.nvim_create_augroup("LspFormat", { clear = true })
-vim.api.nvim_create_autocmd("BufWritePre", {
-	group = format_augroup,
+-- Linting via nvim-lint
+local lint = require("lint")
+lint.linters_by_ft = {
+	sh = { "shellcheck" },
+	bash = { "shellcheck" },
+	yaml = { "yamllint" },
+	dockerfile = { "hadolint" },
+	markdown = { "markdownlint" },
+}
+
+vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 	callback = function()
-		vim.lsp.buf.format({ async = false })
+		lint.try_lint()
 	end,
 })
 
